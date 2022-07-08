@@ -18,15 +18,14 @@ import javax.swing.WindowConstants.EXIT_ON_CLOSE
 @BorderPane
 class Gui {
     @Component(NORTH) private val north = JLabel("North")
-    @Component(CENTER) private val center = JTextField("Center")
+    @Component(CENTER) @Disabled private val center = JTextField("Center")
 
     @Component(SOUTH)
     @Distinct("south_button")
+    @Disabled
     private val south = JButton("South")
 
-    val processed = AnnotationProcessor(this)
-
-    @EventHandler("south_button", BUTTON_ONCLICK) fun onSouthClick() {
+    @EventHandler("south", BUTTON_ONCLICK) fun onSouthClick() {
         println("South clicked")
     }
 

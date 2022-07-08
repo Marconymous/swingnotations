@@ -1,18 +1,16 @@
 package dev.marconymous.gui.processors
 
 import dev.marconymous.gui.annotations.*
+import dev.marconymous.gui.processors.impl.ComponentAnnotationProcessor
+import dev.marconymous.gui.processors.impl.DisabledProcessor
+import dev.marconymous.gui.processors.impl.EventListenerProcessor
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.GridLayout
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
 import javax.swing.JComponent
 import javax.swing.JFrame
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMembers
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 
 class AnnotationProcessor<T : Any>(private val obj: T) {
@@ -58,6 +56,14 @@ class AnnotationProcessor<T : Any>(private val obj: T) {
     }
 
     private fun handleComponentAnnotation() {
+        val processors = arrayOf(
+            DisabledProcessor(),
+            EventListenerProcessor(cls, obj),
+
+            // finaly add the component to the frame
+            ComponentAnnotationProcessor(frame)
+        )
+
         val components = cls.declaredMembers.filter {
             println("${it.name}: \n Annotations: ${it.annotations.map { ac -> ac.annotationClass.simpleName }} \n Type: ${it.returnType} \n Visibility: ${it.visibility}")
 
@@ -71,60 +77,10 @@ class AnnotationProcessor<T : Any>(private val obj: T) {
                 "@Component annotation can only be used on JComponent: ${it.name}"
             )
 
-            val componentAnnotations =
-                it.annotations.find { i3 -> i3 is Component } as Component
-
-            val disabledAnnotation = it.annotations.find { i3 -> i3 is Disabled }
-            if (disabledAnnotation != null) {
-                component.isEnabled = !(disabledAnnotation as Disabled).value
+            processors.forEach { proc ->
+                proc.handle(i2, component)
             }
-
-            eventListenerAnnotation(i2, component)
-
-            if (componentAnnotations.constraints.isNotBlank()) {
-                frame.add(component, componentAnnotations.constraints)
-                return@forEach
-            }
-
-            frame.add(component)
         }
-    }
-
-    private fun eventListenerAnnotation(property: KProperty1<T, *>, component: JComponent) {
-        val eventHandler = cls.declaredFunctions.filter {
-            it.findAnnotation<EventHandler>() != null
-        }.find {
-            val name = it.findAnnotation<EventHandler>()?.setOn ?: return@find false
-
-            if (name == property.name || name == property.findAnnotation<Distinct>()?.value) {
-                return@find true
-            }
-
-            false
-        } ?: return
-
-        val eventHandlerAnnotation = eventHandler.findAnnotation<EventHandler>() ?: return
-
-        val eventType = eventHandlerAnnotation.eventType
-
-        if (eventHandler.parameters.isEmpty() || eventHandler.parameters.size > 2 || (eventHandler.parameters.size == 2 && eventHandler.parameters[1].type.toString() != ActionEvent::class.qualifiedName)) {
-            println("param: ${eventHandler.parameters[1].type} -> ${ActionEvent::class} -> ${eventHandler.parameters[1].type == ActionEvent::class}")
-            throw IllegalArgumentException("EventHandler ${eventHandler.name} must have either 0 or 1 parameters (of type ${ActionEvent::class.qualifiedName})")
-        }
-
-        if (component::class == eventType.target || component::class.isSubclassOf(eventType.target)) {
-            eventType.setter.call(component, ActionListener {
-                if (eventHandler.parameters.size == 1) {
-                    eventHandler.call(obj)
-                    return@ActionListener
-                }
-
-                if (eventHandler.parameters.size == 2) {
-                    eventHandler.call(obj, it)
-                }
-            })
-        }
-
     }
 
     private fun handleLayoutAnnotation() {
