@@ -1,24 +1,35 @@
 package dev.marconymous.gui.processors
 
+import dev.marconymous.gui.GeneratedFrame
 import dev.marconymous.gui.annotations.*
 import dev.marconymous.gui.processors.impl.ComponentAnnotationProcessor
-import dev.marconymous.gui.processors.impl.DisabledProcessor
 import dev.marconymous.gui.processors.impl.EventListenerProcessor
+import dev.marconymous.gui.processors.impl.IsEnabledProcessor
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.GridLayout
 import javax.swing.JComponent
-import javax.swing.JFrame
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.jvm.isAccessible
 
-class AnnotationProcessor<T : Any>(private val obj: T) {
+/**
+ * @author marconymous
+ * @since SNAPSHOT-1.0.0
+ *
+ * @param T the type of provided Object
+ * @property obj the provided object
+ * @constructor internal constructor to prevent instantiation outside of [dev.marconymous.gui.SwingNotations.generate]
+ */
+class AnnotationProcessor<T : Any> internal constructor(private val obj: T) {
     private val cls = obj::class
     private val cGui = checkForCGUI()
-    private val frame = JFrame()
+    private val frame: GeneratedFrame<T> = GeneratedFrame(obj)
 
-    fun process(): JFrame {
+    /**
+     * @return the generated frame
+     */
+    fun process(): GeneratedFrame<T> {
         // Set Correct Layout to Frame
         handleLayoutAnnotation()
 
@@ -57,7 +68,7 @@ class AnnotationProcessor<T : Any>(private val obj: T) {
 
     private fun handleComponentAnnotation() {
         val processors = arrayOf(
-            DisabledProcessor(),
+            IsEnabledProcessor(),
             EventListenerProcessor(cls, obj),
 
             // finaly add the component to the frame
@@ -65,11 +76,12 @@ class AnnotationProcessor<T : Any>(private val obj: T) {
         )
 
         val components = cls.declaredMembers.filter {
-            println("${it.name}: \n Annotations: ${it.annotations.map { ac -> ac.annotationClass.simpleName }} \n Type: ${it.returnType} \n Visibility: ${it.visibility}")
+            println("${it.name}: \n Annotations: [${it.annotations.size}] ${it.annotations.map { ac -> ac.annotationClass.simpleName }} \n Type: ${it.returnType} \n Visibility: ${it.visibility}")
 
             it.annotations.any { cmp -> cmp is Component }
         }
         components.forEach {
+            @Suppress("UNCHECKED_CAST") // Has to be casted to KProperty1<T, *> because of the way the compiler works
             val i2 = it as KProperty1<T, *>
             i2.isAccessible = true
             val component = i2.get(obj)
@@ -80,6 +92,14 @@ class AnnotationProcessor<T : Any>(private val obj: T) {
             processors.forEach { proc ->
                 proc.handle(i2, component)
             }
+
+            val distinctName = i2.annotations.firstOrNull { an -> an is Distinct }
+                ?.let { an -> an as Distinct }
+                ?.value ?: i2.name
+
+            component.name = distinctName
+
+            frame.addComponent(component)
         }
     }
 

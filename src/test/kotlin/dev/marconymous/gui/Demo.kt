@@ -2,7 +2,6 @@ package dev.marconymous.gui
 
 import dev.marconymous.gui.annotations.*
 import dev.marconymous.gui.enums.EventType.BUTTON_ONCLICK
-import dev.marconymous.gui.processors.AnnotationProcessor
 import java.awt.BorderLayout.*
 import javax.swing.JButton
 import javax.swing.JLabel
@@ -17,23 +16,27 @@ import javax.swing.WindowConstants.EXIT_ON_CLOSE
 @CloseOperation(EXIT_ON_CLOSE)
 @BorderPane
 class Gui {
-    @Component(NORTH) private val north = JLabel("North")
-    @Component(CENTER) @Disabled private val center = JTextField("Center")
+    @Component(NORTH)
+    val north = JLabel("North")
+
+    @Component(CENTER)
+    val center = JTextField("Center")
 
     @Component(SOUTH)
+    @IsEnabled(false)
     @Distinct("south_button")
-    @Disabled
-    private val south = JButton("South")
+    val south = JButton("South")
 
-    @EventHandler("south", BUTTON_ONCLICK) fun onSouthClick() {
+    val s = "Test"
+
+    @EventHandler("south_button", BUTTON_ONCLICK)
+    fun onSouthClick() {
         println("South clicked")
-    }
-
-    init {
-        AnnotationProcessor(this).process()
     }
 }
 
 fun main() {
-    val gui = Gui()
+    val gui = SwingNotations.generate(Gui::class)
+
+    gui["south_button"]?.isEnabled = true
 }

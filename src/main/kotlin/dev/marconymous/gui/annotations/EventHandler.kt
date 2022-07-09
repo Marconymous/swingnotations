@@ -22,4 +22,6 @@ annotation class Distinct(val value: String)
  * @property setOn the name of the component to set the event handler on
  * @constructor Create empty Event handler
  */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class EventHandler(val setOn: String, val eventType: EventType)

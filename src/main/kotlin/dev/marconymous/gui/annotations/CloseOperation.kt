@@ -1,5 +1,7 @@
 package dev.marconymous.gui.annotations
 
+import javax.swing.WindowConstants
+
 /**
  * @author Marconymous
  * @since SNAPSHOT-1.0.0
@@ -13,3 +15,20 @@ package dev.marconymous.gui.annotations
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class CloseOperation(val value: Int)
+
+/**
+ * @author Marconymous
+ * @since SNAPSHOT-1.0.0
+ *
+ * Close operation constants for the [CloseOperation] annotation.
+ *
+ * @constructor Create empty Close op
+ * @see WindowConstants
+ */
+@Suppress("unused")
+object CloseOp {
+    const val NOTHING = WindowConstants.DO_NOTHING_ON_CLOSE
+    const val HIDE = WindowConstants.HIDE_ON_CLOSE
+    const val DISPOSE = WindowConstants.DISPOSE_ON_CLOSE
+    const val EXIT = WindowConstants.EXIT_ON_CLOSE
+}
