@@ -1,5 +1,7 @@
 package dev.marconymous.gui.annotations
 
+import javax.swing.JComponent
+
 /**
  * @author Marconymous
  * @since SNAPSHOT-1.0.0
@@ -10,4 +12,6 @@ package dev.marconymous.gui.annotations
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
+@Requires(Frame::class)
+@AllowedOn([JComponent::class])
 annotation class Visible(val value: Boolean = true)

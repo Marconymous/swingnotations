@@ -13,6 +13,7 @@ package dev.marconymous.gui.annotations
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
+@Requires(Frame::class)
 annotation class BorderPane
 
 /**
@@ -27,6 +28,7 @@ annotation class BorderPane
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
+@Requires(Frame::class)
 annotation class GridPane(val rows: Int, val columns: Int)
 
 /**
@@ -38,5 +40,6 @@ annotation class GridPane(val rows: Int, val columns: Int)
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
+@Requires(Frame::class)
 annotation class FlowPane()
 

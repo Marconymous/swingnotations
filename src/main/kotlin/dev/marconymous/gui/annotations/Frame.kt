@@ -14,4 +14,6 @@ package dev.marconymous.gui.annotations
  * @see dev.marconymous.gui.processors.AnnotationProcessor
  * @see javax.swing.JFrame
  */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class Frame(val title: String, val height: Int, val width: Int)

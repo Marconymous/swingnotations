@@ -1,5 +1,6 @@
 package dev.marconymous.gui.annotations
 
+import javax.swing.JComponent
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.annotation.AnnotationTarget.PROPERTY
@@ -15,6 +16,8 @@ import kotlin.annotation.AnnotationTarget.PROPERTY
 @MustBeDocumented
 @Target(FIELD, PROPERTY)
 @Retention(RUNTIME)
+@Requires(Component::class)
+@AllowedOn([JComponent::class])
 annotation class IsEnabled(val value: Boolean = true)
 
 

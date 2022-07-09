@@ -14,6 +14,7 @@ import javax.swing.WindowConstants
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
+@Requires(Frame::class)
 annotation class CloseOperation(val value: Int)
 
 /**

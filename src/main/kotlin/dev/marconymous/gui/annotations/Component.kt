@@ -1,5 +1,7 @@
 package dev.marconymous.gui.annotations
 
+import javax.swing.JComponent
+
 /**
  * @author Marconymous
  * @since SNAPSHOT-1.0.0
@@ -11,4 +13,5 @@ package dev.marconymous.gui.annotations
  */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
+@AllowedOn([JComponent::class])
 annotation class Component(val constraints: String = "")

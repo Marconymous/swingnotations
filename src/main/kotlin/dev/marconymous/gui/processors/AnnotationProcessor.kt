@@ -1,7 +1,7 @@
 package dev.marconymous.gui.processors
 
 import dev.marconymous.gui.GeneratedFrame
-import dev.marconymous.gui.annotations.*
+import dev.marconymous.gui.annotations.Frame
 import dev.marconymous.gui.processors.impl.klass.*
 
 /**
@@ -21,7 +21,10 @@ class AnnotationProcessor<T : Any> internal constructor(private val obj: T) {
      */
     fun process(): GeneratedFrame<T> {
         checkFrameAnnotation()
+
         val processors = arrayOf(
+            RequiredOnClassProcessor(),
+            AllowedOnProcessor(),
             LayoutProcessor(),
             CloseOperationProcessor<T>(),
             AllComponentsProcessor(),
