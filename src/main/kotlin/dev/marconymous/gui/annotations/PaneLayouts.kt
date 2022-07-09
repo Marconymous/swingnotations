@@ -1,5 +1,9 @@
 package dev.marconymous.gui.annotations
 
+/*
+ IMPORTANT: WHEN ADDING ANNOTATIONS, DO NOT FORGET TO ADD THEM TO THE LayoutProcessor.kt (constructor call)
+ */
+
 /**
  * @author Marconymous
  * @since SNAPSHOT-1.0.0

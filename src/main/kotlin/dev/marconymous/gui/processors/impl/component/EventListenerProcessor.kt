@@ -1,4 +1,4 @@
-package dev.marconymous.gui.processors.impl
+package dev.marconymous.gui.processors.impl.component
 
 import dev.marconymous.gui.annotations.Distinct
 import dev.marconymous.gui.annotations.EventHandler

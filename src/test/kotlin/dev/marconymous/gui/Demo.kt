@@ -17,26 +17,22 @@ import javax.swing.WindowConstants.EXIT_ON_CLOSE
 @BorderPane
 class Gui {
     @Component(NORTH)
-    val north = JLabel("North")
+    private val north = JLabel("North")
 
     @Component(CENTER)
-    val center = JTextField("Center")
+    private val center = JTextField("Center")
 
     @Component(SOUTH)
     @IsEnabled(false)
     @Distinct("south_button")
-    val south = JButton("South")
-
-    val s = "Test"
+    private val south = JButton("South")
 
     @EventHandler("south_button", BUTTON_ONCLICK)
-    fun onSouthClick() {
+    private fun onSouthClick() {
         println("South clicked")
     }
 }
 
 fun main() {
     val gui = SwingNotations.generate(Gui::class)
-
-    gui["south_button"]?.isEnabled = true
 }
